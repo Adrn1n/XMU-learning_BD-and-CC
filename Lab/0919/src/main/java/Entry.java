@@ -2,6 +2,7 @@ import hdfs.utils.Manager;
 import hdfs.operations.Uploader;
 import hdfs.operations.Downloader;
 import hdfs.operations.FileReader;
+import hdfs.utils.HDFSInfo;
 import hdfs.operations.Inspector;
 import java.util.Map;
 import java.util.Scanner;
@@ -26,11 +27,11 @@ public class Entry{
         System.out.print(content);
     }
     private static void handleInspect(String hdfsPath) throws Exception{
-        Map<String,Object> info=Inspector.getInfo(hdfsPath);
-        System.out.println("Permissions: "+info.get("Permissions").toString());
-        System.out.println("Size: "+info.get("Size").toString());
-        System.out.println("Modification Time: "+info.get("Modification Time").toString());
-        System.out.println("Path: "+info.get("Path").toString());
+        HDFSInfo hdfsInfo=Inspector.getInfo(hdfsPath);
+        System.out.println("Permissions: "+hdfsInfo.info.get("Permissions").toString());
+        System.out.println("Size: "+hdfsInfo.info.get("Size").toString());
+        System.out.println("Modification Time: "+hdfsInfo.info.get("Modification Time").toString());
+        System.out.println("Path: "+hdfsInfo.info.get("Path").toString());
     }
     private static void handleArgs(String[] args) throws Exception{
         if(args.length<1)
