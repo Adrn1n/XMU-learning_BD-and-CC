@@ -6,12 +6,12 @@ import org.apache.hadoop.fs.Path;
 import java.io.File;
 
 public class Downloader{
-    public static void download(String hdfsFile,String localFile) throws Exception{
+    public static void download(String hdfsPath,String localPath) throws Exception{
         FileSystem fs=Manager.getFS();
-        Path src=new Path(hdfsFile);
-        File dst=new File(localFile);
+        Path src=new Path(hdfsPath);
+        File dst=new File(localPath);
         if(!fs.exists(src))
-            throw new IllegalArgumentException("HDFS file not exists: "+hdfsFile);
+            throw new IllegalArgumentException("HDFS file not exists: "+hdfsPath);
         if(dst.exists()){
             String baseName=dst.getName();
             int sep=baseName.indexOf('.');

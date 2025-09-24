@@ -11,17 +11,17 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 public class Uploader{
     private static final int appendBufferSize=1024;
 
-    public static void upload(String localFile,String hdfsFile,boolean append) throws Exception{
+    public static void upload(String localPath,String hdfsPath,boolean append) throws Exception{
         FileSystem fs=Manager.getFS();
-        Path src=new Path(localFile);
-        Path dst=new Path(hdfsFile);
-        File file=new File(localFile);
+        Path src=new Path(localPath);
+        Path dst=new Path(hdfsPath);
+        File file=new File(localPath);
         if(!file.exists())
-            throw new IllegalArgumentException("Local file not exists: "+localFile);
+            throw new IllegalArgumentException("Local file not exists: "+localPath);
         if((!fs.exists(dst))||(!append))
             fs.copyFromLocalFile(false,true,src,dst);
         else{
-            BufferedInputStream in=new BufferedInputStream(new FileInputStream(localFile));
+            BufferedInputStream in=new BufferedInputStream(new FileInputStream(localPath));
             FSDataOutputStream out=fs.append(dst);
             byte[] buffer=new byte[appendBufferSize];
             int bytesRead=0;

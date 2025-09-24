@@ -3,6 +3,7 @@ import hdfs.operations.Uploader;
 import hdfs.operations.Downloader;
 import hdfs.operations.FileReader;
 import hdfs.utils.HDFSInfo;
+import java.util.List;
 import hdfs.operations.Inspector;
 import java.util.Map;
 import java.util.Scanner;
@@ -10,28 +11,33 @@ import java.util.Scanner;
 public class Entry{
     private static final String interactiveModeMenu="""
 0. Exit
-1. Upload file
-2. Download file
+1. Upload (only file can append)
+2. Download
 3. Read file
-4. Inspect info
+4. Inspect info (non-recursive)
+5. Inspect info (recursive)
 """;
 
-    private static void handleUpload(String localFile,String hdfsFile,boolean append) throws Exception{
-        Uploader.upload(localFile,hdfsFile,append);
+    private static void handleUpload(String localPath,String hdfsPath,boolean append) throws Exception{
+        Uploader.upload(localPath,hdfsPath,append);
     }
-    private static void handleDownload(String hdfsFile,String localFile) throws Exception{
-        Downloader.download(hdfsFile,localFile);
+    private static void handleDownload(String hdfsPath,String localPath) throws Exception{
+        Downloader.download(hdfsPath,localPath);
     }
-    private static void handleRead(String hdfsFile) throws Exception{
-        String content=FileReader.read(hdfsFile);
+    private static void handleRead(String hdfsPath) throws Exception{
+        String content=FileReader.read(hdfsPath);
         System.out.print(content);
     }
-    private static void handleInspect(String hdfsPath) throws Exception{
-        HDFSInfo hdfsInfo=Inspector.getInfo(hdfsPath);
-        System.out.println("Permissions: "+hdfsInfo.info.get("Permissions").toString());
-        System.out.println("Size: "+hdfsInfo.info.get("Size").toString());
-        System.out.println("Modification Time: "+hdfsInfo.info.get("Modification Time").toString());
-        System.out.println("Path: "+hdfsInfo.info.get("Path").toString());
+    private static void printInfo(List<Object> hdfsInfos){
+        for(Object obj:hdfsInfos)
+            if(obj instanceof HDFSInfo)
+                System.out.print(((HDFSInfo)obj).toString());
+            else
+                printInfo((List<Object>)obj);
+    }
+    private static void handleInspect(String hdfsPath,boolean recursive) throws Exception{
+        List<Object> hdfsInfos=Inspector.getInfo(hdfsPath,recursive);
+        printInfo(hdfsInfos);
     }
     private static void handleArgs(String[] args) throws Exception{
         if(args.length<1)
@@ -39,27 +45,24 @@ public class Entry{
         String op=args[0];
         switch(op){
             case "upload":
-                {
-                    if(args.length!=4)
-                        throw new IllegalArgumentException("Usage: upload <localFile> <hdfsFile> <append|overwrite>");
-                    boolean append=args[3].equals("append");
-                    handleUpload(args[1],args[2],append);
-                    break;
-                }
+                if(args.length!=4)
+                    throw new IllegalArgumentException("Usage: upload <localPath> <hdfsPath> <a (only file)|[o]>");
+                handleUpload(args[1],args[2],args[3].equals("a"));
+                break;
             case "download":
                 if(args.length!=3)
-                    throw new IllegalArgumentException("Usage: download <hdfsFile> <localFile>");
+                    throw new IllegalArgumentException("Usage: download <hdfsPath> <localPath>");
                 handleDownload(args[1],args[2]);
                 break;
             case "read":
                 if(args.length!=2)
-                    throw new IllegalArgumentException("Usage: read <hdfsFile>");
+                    throw new IllegalArgumentException("Usage: read <hdfsPath>");
                 handleRead(args[1]);
                 break;
             case "inspect":
-                if(args.length!=2)
-                    throw new IllegalArgumentException("Usage: inspect <hdfsPath>");
-                handleInspect(args[1]);
+                if(args.length!=3)
+                    throw new IllegalArgumentException("Usage: inspect <hdfsPath> <[r]|nr>");
+                handleInspect(args[1],!args[2].equals("nr"));
                 break;
             default:
                 throw new IllegalArgumentException("Unknown operation: "+op);
@@ -81,35 +84,42 @@ public class Entry{
                     case 1:
                         {
                             System.out.print("local file: ");
-                            String localFile=scanner.next();
+                            String localPath=scanner.next();
                             System.out.print("hdfs file: ");
-                            String hdfsFile=scanner.next();
-                            System.out.print("append or overwrite ([0]/1): ");
-                            boolean append=((scanner.nextInt())!=1);
-                            handleUpload(localFile,hdfsFile,append);
+                            String hdfsPath=scanner.next();
+                            System.out.print("append or overwrite (0 (only file)/[1]): ");
+                            boolean append=((scanner.nextInt())==0);
+                            handleUpload(localPath,hdfsPath,append);
                             break;
                         }
                     case 2:
                         {
                             System.out.print("hdfs file: ");
-                            String hdfsFile=scanner.next();
+                            String hdfsPath=scanner.next();
                             System.out.print("local file: ");
-                            String localFile=scanner.next();
-                            handleDownload(hdfsFile,localFile);
+                            String localPath=scanner.next();
+                            handleDownload(hdfsPath,localPath);
                             break;
                         }
                     case 3:
                         {
                             System.out.print("hdfs file: ");
-                            String hdfsFile=scanner.next();
-                            handleRead(hdfsFile);
+                            String hdfsPath=scanner.next();
+                            handleRead(hdfsPath);
                             break;
                         }
                     case 4:
                         {
                             System.out.print("hdfs path: ");
                             String hdfsPath=scanner.next();
-                            handleInspect(hdfsPath);
+                            handleInspect(hdfsPath,false);
+                            break;
+                        }
+                    case 5:
+                        {
+                            System.out.print("hdfs path: ");
+                            String hdfsPath=scanner.next();
+                            handleInspect(hdfsPath,true);
                             break;
                         }
                     default:
