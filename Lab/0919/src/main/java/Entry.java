@@ -1,6 +1,7 @@
 import hdfs.utils.Manager;
 import hdfs.operations.Uploader;
 import hdfs.operations.Downloader;
+import hdfs.operations.FileReader;
 import java.util.Scanner;
 
 public class Entry{
@@ -8,6 +9,7 @@ public class Entry{
 0. Exit
 1. Upload file
 2. Download file
+3. Read file
 """;
 
     public static void main(String[] args){
@@ -37,6 +39,12 @@ public class Entry{
                 if(args.length!=3)
                     throw new IllegalArgumentException("Usage: download <hdfsFile> <localFile>");
                 Downloader.download(args[1],args[2]);
+                break;
+            case "read":
+                if(args.length!=2)
+                    throw new IllegalArgumentException("Usage: read <hdfsFile>");
+                String content=FileReader.read(args[1]);
+                System.out.print(content);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown operation: "+op);
@@ -73,6 +81,14 @@ public class Entry{
                             System.out.print("local file: ");
                             String localFile=scanner.next();
                             Downloader.download(hdfsFile,localFile);
+                            break;
+                        }
+                    case 3:
+                        {
+                            System.out.print("hdfs file: ");
+                            String hdfsFile=scanner.next();
+                            String content=FileReader.read(hdfsFile);
+                            System.out.print(content);
                             break;
                         }
                     default:
