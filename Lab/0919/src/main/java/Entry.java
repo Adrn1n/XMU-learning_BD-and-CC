@@ -11,20 +11,21 @@ import java.util.Scanner;
 public class Entry{
     private static final String interactiveModeMenu="""
 0. Exit
-1. Upload (only file can append)
-2. Download
+1. Upload
+2. Download (auto rename if exists)
 3. Read file
 4. Inspect info (non-recursive)
 5. Inspect info (recursive)
-6. Create
+6. Create (dir end with '/')
 7. Delete
+8. Move
 """;
 
-    private static void handleUpload(String localPath,String hdfsPath,boolean append) throws Exception{
-        Uploader.upload(localPath,hdfsPath,append);
+    private static void handleUpload(String localPath,String hdfsPath,Uploader.Mode mode) throws Exception{
+        Uploader.upload(localPath,hdfsPath,mode);
     }
     private static void handleDownload(String hdfsPath,String localPath) throws Exception{
-        Downloader.download(hdfsPath,localPath);
+        Downloader.download(hdfsPath,localPath,true);
     }
     private static void handleRead(String hdfsPath) throws Exception{
         String content=FileReader.read(hdfsPath);
@@ -38,14 +39,17 @@ public class Entry{
                 printInfo((List<Object>)obj);
     }
     private static void handleInspect(String hdfsPath,boolean recursive) throws Exception{
-        List<Object> hdfsInfos=Inspector.getInfo(hdfsPath,recursive);
+        List<Object> hdfsInfos=(Inspector.getInfo(hdfsPath,recursive));
         printInfo(hdfsInfos);
     }
     private static void handleCreate(String hdfsPath) throws Exception{
-        Manager.create(hdfsPath);
+        new Manager().create(hdfsPath);
     }
     private static void handleDelete(String hdfsPath) throws Exception{
-        Manager.delete(hdfsPath);
+        new Manager().delete(hdfsPath);
+    }
+    private static void handleMove(String srcPath,String dstPath) throws Exception{
+        new Manager().move(srcPath,dstPath);
     }
     private static void handleArgs(String[] args) throws Exception{
         if(args.length<1)
@@ -54,8 +58,19 @@ public class Entry{
         switch(op){
             case "upload":
                 if(args.length!=4)
-                    throw new IllegalArgumentException("Usage: upload <localPath> <hdfsPath> <a (only file)|[o]>");
-                handleUpload(args[1],args[2],args[3].equals("a"));
+                    throw new IllegalArgumentException("Usage: upload <localPath> <hdfsPath> <a|[o]|p>");
+                Uploader.Mode mode=null;
+                switch(args[3]){
+                    case "a":
+                        mode=(Uploader.Mode.APPEND);
+                        break;
+                    case "p":
+                        mode=(Uploader.Mode.PREPEND);
+                        break;
+                    default:
+                        mode=(Uploader.Mode.OVERWRITE);
+                }
+                handleUpload(args[1],args[2],mode);
                 break;
             case "download":
                 if(args.length!=3)
@@ -70,7 +85,7 @@ public class Entry{
             case "inspect":
                 if(args.length!=3)
                     throw new IllegalArgumentException("Usage: inspect <hdfsPath> <[r]|nr>");
-                handleInspect(args[1],!args[2].equals("nr"));
+                handleInspect(args[1],!(args[2].equals("nr")));
                 break;
             case "create":
                 if(args.length!=2)
@@ -81,6 +96,11 @@ public class Entry{
                 if(args.length!=2)
                     throw new IllegalArgumentException("Usage: delete <hdfsPath>");
                 handleDelete(args[1]);
+                break;
+            case "move":
+                if(args.length!=3)
+                    throw new IllegalArgumentException("Usage: move <srcPath> <dstPath>");
+                handleMove(args[1],args[2]);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown operation: "+op);
@@ -105,9 +125,19 @@ public class Entry{
                             String localPath=scanner.next();
                             System.out.print("hdfs file: ");
                             String hdfsPath=scanner.next();
-                            System.out.print("append or overwrite (0 (only file)/[1]): ");
-                            boolean append=((scanner.nextInt())==0);
-                            handleUpload(localPath,hdfsPath,append);
+                            System.out.print("append, overwrite or prepend (0/[1]/2): ");
+                            Uploader.Mode mode=null;
+                            switch(scanner.nextInt()){
+                                case 0:
+                                    mode=(Uploader.Mode.APPEND);
+                                    break;
+                                case 2:
+                                    mode=(Uploader.Mode.PREPEND);
+                                    break;
+                                default:
+                                    mode=(Uploader.Mode.OVERWRITE);
+                            }
+                            handleUpload(localPath,hdfsPath,mode);
                             break;
                         }
                     case 2:
@@ -154,12 +184,21 @@ public class Entry{
                             handleDelete(hdfsPath);
                             break;
                         }
+                    case 8:
+                        {
+                            System.out.print("source hdfs path: ");
+                            String srcPath=scanner.next();
+                            System.out.print("destination hdfs path: ");
+                            String dstPath=scanner.next();
+                            handleMove(srcPath,dstPath);
+                            break;
+                        }
                     default:
                         System.err.println("Unknown choice: "+choice);
                 }
             }
             catch(Exception e){
-                System.err.println("Error: "+e.getMessage());
+                System.err.println("Error: "+(e.getMessage()));
                 scanner.nextLine();
             }
         scanner.close();
@@ -172,8 +211,7 @@ public class Entry{
                 interactiveMode();
             Controller.closeFS();
         }catch(Exception e){
-            System.err.println("Error: "+e.getMessage());
-            e.printStackTrace();
+            System.err.println("Error: "+(e.getMessage()));
         }
     }
 }

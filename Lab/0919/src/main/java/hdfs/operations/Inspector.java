@@ -12,14 +12,14 @@ import java.util.Date;
 public class Inspector{
     public static List<Object> getInfo(String hdfsPath,boolean recursive) throws Exception{
         List<Object> res=new ArrayList<>();
-        FileSystem fs=Controller.getFS();
+        FileSystem fs=(Controller.getFS());
         Path path=new Path(hdfsPath);
-        if(!fs.exists(path))
-            throw new IllegalArgumentException("HDFS path not exists: "+hdfsPath);
+        if(!(fs.exists(path)))
+            throw new IllegalArgumentException("Not exists: "+hdfsPath);
         FileStatus selfStatus=fs.getFileStatus(path);
         res.add(new HDFSInfo(selfStatus));
-        FileStatus[] statuses=fs.listStatus(path);
-        if(recursive&&selfStatus.isDirectory())
+        FileStatus[] statuses=(fs.listStatus(path));
+        if(selfStatus.isDirectory()&&recursive)
             for(FileStatus status:statuses)
                 res.add(getInfo(status.getPath().toString(),recursive));
         return res;

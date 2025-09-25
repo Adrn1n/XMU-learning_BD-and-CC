@@ -9,17 +9,17 @@ import java.io.InputStreamReader;
 
 public class FileReader{
     public static String read(String hdfsPath) throws Exception{
-        FileSystem fs=Controller.getFS();
+        FileSystem fs=(Controller.getFS());
         Path path=new Path(hdfsPath);
-        if(!fs.exists(path))
-            throw new IllegalArgumentException("HDFS file not exists: "+hdfsPath);
+        if(!(fs.exists(path)))
+            throw new IllegalArgumentException("Not exists: "+hdfsPath);
         if(fs.isDirectory(path))
-            throw new IllegalArgumentException("HDFS path is a directory: "+hdfsPath);
+            throw new IllegalArgumentException("Is a directory: "+hdfsPath);
         StringBuilder contentBuilder=new StringBuilder();
         FSDataInputStream in=null;
         BufferedReader reader=null;
         try{
-            in=fs.open(path);
+            in=(fs.open(path));
             reader=new BufferedReader(new InputStreamReader(in));
             String line;
             while((line=reader.readLine())!=null)
