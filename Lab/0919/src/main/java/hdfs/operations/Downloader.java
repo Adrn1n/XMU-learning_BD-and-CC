@@ -1,13 +1,13 @@
 package hdfs.operations;
 
-import hdfs.utils.Manager;
+import hdfs.utils.Controller;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import java.io.File;
 
 public class Downloader{
     public static void download(String hdfsPath,String localPath) throws Exception{
-        FileSystem fs=Manager.getFS();
+        FileSystem fs=Controller.getFS();
         Path src=new Path(hdfsPath);
         File dst=new File(localPath);
         if(!fs.exists(src))

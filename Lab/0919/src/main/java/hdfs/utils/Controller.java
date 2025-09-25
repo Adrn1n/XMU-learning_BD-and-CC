@@ -3,7 +3,7 @@ package hdfs.utils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 
-public class Manager{
+public class Controller{
     private static Configuration conf=null;
     private static FileSystem fs=null;
 

@@ -1,11 +1,11 @@
-import hdfs.utils.Manager;
+import hdfs.utils.Controller;
 import hdfs.operations.Uploader;
 import hdfs.operations.Downloader;
 import hdfs.operations.FileReader;
 import hdfs.utils.HDFSInfo;
 import java.util.List;
 import hdfs.operations.Inspector;
-import java.util.Map;
+import hdfs.operations.Manager;
 import java.util.Scanner;
 
 public class Entry{
@@ -16,6 +16,8 @@ public class Entry{
 3. Read file
 4. Inspect info (non-recursive)
 5. Inspect info (recursive)
+6. Create
+7. Delete
 """;
 
     private static void handleUpload(String localPath,String hdfsPath,boolean append) throws Exception{
@@ -38,6 +40,12 @@ public class Entry{
     private static void handleInspect(String hdfsPath,boolean recursive) throws Exception{
         List<Object> hdfsInfos=Inspector.getInfo(hdfsPath,recursive);
         printInfo(hdfsInfos);
+    }
+    private static void handleCreate(String hdfsPath) throws Exception{
+        Manager.create(hdfsPath);
+    }
+    private static void handleDelete(String hdfsPath) throws Exception{
+        Manager.delete(hdfsPath);
     }
     private static void handleArgs(String[] args) throws Exception{
         if(args.length<1)
@@ -63,6 +71,16 @@ public class Entry{
                 if(args.length!=3)
                     throw new IllegalArgumentException("Usage: inspect <hdfsPath> <[r]|nr>");
                 handleInspect(args[1],!args[2].equals("nr"));
+                break;
+            case "create":
+                if(args.length!=2)
+                    throw new IllegalArgumentException("Usage: create <hdfsPath>");
+                handleCreate(args[1]);
+                break;
+            case "delete":
+                if(args.length!=2)
+                    throw new IllegalArgumentException("Usage: delete <hdfsPath>");
+                handleDelete(args[1]);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown operation: "+op);
@@ -122,12 +140,26 @@ public class Entry{
                             handleInspect(hdfsPath,true);
                             break;
                         }
+                    case 6:
+                        {
+                            System.out.print("hdfs path: ");
+                            String hdfsPath=scanner.next();
+                            handleCreate(hdfsPath);
+                            break;
+                        }
+                    case 7:
+                        {
+                            System.out.print("hdfs path: ");
+                            String hdfsPath=scanner.next();
+                            handleDelete(hdfsPath);
+                            break;
+                        }
                     default:
-                        System.out.println("Unknown choice: "+choice);
+                        System.err.println("Unknown choice: "+choice);
                 }
             }
             catch(Exception e){
-                System.out.println("Error: "+e.getMessage());
+                System.err.println("Error: "+e.getMessage());
                 scanner.nextLine();
             }
         scanner.close();
@@ -138,9 +170,9 @@ public class Entry{
                 handleArgs(args);
             else
                 interactiveMode();
-            Manager.closeFS();
+            Controller.closeFS();
         }catch(Exception e){
-            System.out.println("Error: "+e.getMessage());
+            System.err.println("Error: "+e.getMessage());
             e.printStackTrace();
         }
     }

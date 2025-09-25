@@ -2,7 +2,7 @@ package hdfs.operations;
 
 import java.util.List;
 import java.util.ArrayList;
-import hdfs.utils.Manager;
+import hdfs.utils.Controller;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.FileStatus;
@@ -12,7 +12,7 @@ import java.util.Date;
 public class Inspector{
     public static List<Object> getInfo(String hdfsPath,boolean recursive) throws Exception{
         List<Object> res=new ArrayList<>();
-        FileSystem fs=Manager.getFS();
+        FileSystem fs=Controller.getFS();
         Path path=new Path(hdfsPath);
         if(!fs.exists(path))
             throw new IllegalArgumentException("HDFS path not exists: "+hdfsPath);

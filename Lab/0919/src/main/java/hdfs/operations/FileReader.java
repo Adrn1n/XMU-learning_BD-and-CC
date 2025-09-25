@@ -1,6 +1,6 @@
 package hdfs.operations;
 
-import hdfs.utils.Manager;
+import hdfs.utils.Controller;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.FSDataInputStream;
@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 
 public class FileReader{
     public static String read(String hdfsPath) throws Exception{
-        FileSystem fs=Manager.getFS();
+        FileSystem fs=Controller.getFS();
         Path path=new Path(hdfsPath);
         if(!fs.exists(path))
             throw new IllegalArgumentException("HDFS file not exists: "+hdfsPath);

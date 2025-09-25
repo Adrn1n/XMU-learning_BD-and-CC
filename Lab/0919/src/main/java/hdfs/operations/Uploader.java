@@ -1,6 +1,6 @@
 package hdfs.operations;
 
-import hdfs.utils.Manager;
+import hdfs.utils.Controller;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import java.io.File;
@@ -12,7 +12,7 @@ public class Uploader{
     private static final int appendBufferSize=1024;
 
     public static void upload(String localPath,String hdfsPath,boolean append) throws Exception{
-        FileSystem fs=Manager.getFS();
+        FileSystem fs=Controller.getFS();
         Path src=new Path(localPath);
         Path dst=new Path(hdfsPath);
         File file=new File(localPath);
