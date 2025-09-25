@@ -22,7 +22,7 @@ public class Entry{
 """;
 
     private static void handleUpload(String localPath,String hdfsPath,Uploader.Mode mode) throws Exception{
-        Uploader.upload(localPath,hdfsPath,mode);
+        new Uploader().upload(localPath,hdfsPath,mode);
     }
     private static void handleDownload(String hdfsPath,String localPath) throws Exception{
         Downloader.download(hdfsPath,localPath,true);

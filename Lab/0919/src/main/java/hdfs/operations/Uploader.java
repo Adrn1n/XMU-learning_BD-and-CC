@@ -12,9 +12,17 @@ import org.apache.hadoop.io.IOUtils;
 
 public class Uploader{
     public static enum Mode{OVERWRITE,APPEND,PREPEND}
-    private static final int appendBufferSize=1024;
+    private int appendBufferSize=1024;
 
-    public static void upload(String localPath,String hdfsPath,Mode mode) throws Exception{
+    public Uploader(){
+        appendBufferSize=1024;
+    }
+    public Uploader(int bufferSize){
+        if(bufferSize<=0)
+            throw new IllegalArgumentException("Buffer size must be positive");
+        appendBufferSize=bufferSize;
+    }
+    public void upload(String localPath,String hdfsPath,Mode mode) throws Exception{
         FileSystem fs=(Controller.getFS());
         Path src=new Path(localPath);
         Path dst=new Path(hdfsPath);
