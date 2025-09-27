@@ -12,20 +12,19 @@ public class Entry{
     private static final String interactiveModeMenu="""
 0. Exit
 1. Upload
-2. Download (auto rename if exists)
+2. Download
 3. Read file
-4. Inspect info (non-recursive)
-5. Inspect info (recursive)
-6. Create (dir end with '/')
-7. Delete
-8. Move
+4. Inspect info
+5. Create (dir end with '/')
+6. Delete
+7. Move
 """;
 
     private static void handleUpload(String localPath,String hdfsPath,Uploader.Mode mode) throws Exception{
         new Uploader().upload(localPath,hdfsPath,mode);
     }
-    private static void handleDownload(String hdfsPath,String localPath) throws Exception{
-        Downloader.download(hdfsPath,localPath,true);
+    private static void handleDownload(String hdfsPath,String localPath,boolean autoRename) throws Exception{
+        Downloader.download(hdfsPath,localPath,autoRename);
     }
     private static void handleRead(String hdfsPath) throws Exception{
         String content=FileReader.read(hdfsPath);
@@ -73,9 +72,9 @@ public class Entry{
                 handleUpload(args[1],args[2],mode);
                 break;
             case "download":
-                if(args.length!=3)
-                    throw new IllegalArgumentException("Usage: download <hdfsPath> <localPath>");
-                handleDownload(args[1],args[2]);
+                if(args.length!=4)
+                    throw new IllegalArgumentException("Usage: download <hdfsPath> <localPath> <[y]|n>");
+                handleDownload(args[1],args[2],!(args[3].equals("n")));
                 break;
             case "read":
                 if(args.length!=2)
@@ -121,9 +120,9 @@ public class Entry{
                         break;
                     case 1:
                         {
-                            System.out.print("local file: ");
+                            System.out.print("local path: ");
                             String localPath=scanner.next();
-                            System.out.print("hdfs file: ");
+                            System.out.print("hdfs path: ");
                             String hdfsPath=scanner.next();
                             System.out.print("append, overwrite or prepend (0/[1]/2): ");
                             Uploader.Mode mode=null;
@@ -142,11 +141,15 @@ public class Entry{
                         }
                     case 2:
                         {
-                            System.out.print("hdfs file: ");
+                            System.out.print("hdfs path: ");
                             String hdfsPath=scanner.next();
-                            System.out.print("local file: ");
+                            System.out.print("local path: ");
                             String localPath=scanner.next();
-                            handleDownload(hdfsPath,localPath);
+                            System.out.print("auto rename if exists? (0/[1]): ");
+                            if((scanner.nextInt())!=0)
+                                handleDownload(hdfsPath,localPath,true);
+                            else
+                                handleDownload(hdfsPath,localPath,false);
                             break;
                         }
                     case 3:
@@ -160,31 +163,28 @@ public class Entry{
                         {
                             System.out.print("hdfs path: ");
                             String hdfsPath=scanner.next();
-                            handleInspect(hdfsPath,false);
+                            System.out.print("recursive? (0/[1]): ");
+                            if((scanner.nextInt())!=0)
+                                handleInspect(hdfsPath,true);
+                            else
+                                handleInspect(hdfsPath,false);
                             break;
                         }
                     case 5:
                         {
                             System.out.print("hdfs path: ");
                             String hdfsPath=scanner.next();
-                            handleInspect(hdfsPath,true);
+                            handleCreate(hdfsPath);
                             break;
                         }
                     case 6:
                         {
                             System.out.print("hdfs path: ");
                             String hdfsPath=scanner.next();
-                            handleCreate(hdfsPath);
-                            break;
-                        }
-                    case 7:
-                        {
-                            System.out.print("hdfs path: ");
-                            String hdfsPath=scanner.next();
                             handleDelete(hdfsPath);
                             break;
                         }
-                    case 8:
+                    case 7:
                         {
                             System.out.print("source hdfs path: ");
                             String srcPath=scanner.next();

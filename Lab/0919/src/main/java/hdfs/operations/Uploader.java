@@ -26,37 +26,36 @@ public class Uploader{
         FileSystem fs=(Controller.getFS());
         Path src=new Path(localPath);
         Path dst=new Path(hdfsPath);
-        Path tmpDst=null;
+        Path tmpSrc=null;
         File file=new File(localPath);
         if(!(file.exists()))
             throw new IllegalArgumentException("Local path not exists: "+localPath);
         if((mode==(Mode.PREPEND))&&(fs.exists(dst))){
-            String baseName=dst.getName();
-            int sep=baseName.indexOf('.');
-            sep=(sep==-1)?(baseName.length()):sep;
+            int sep=hdfsPath.indexOf('.');
+            sep=(sep==-1)?(hdfsPath.length()):sep;
             int cnt=0;
             do{
-                tmpDst=new Path(dst.getParent(),(baseName.substring(0,sep))+'_'+cnt+(baseName.substring(sep)));
+                tmpSrc=new Path(hdfsPath.substring(0,sep)+'_'+cnt+(hdfsPath.substring(sep)));
                 ++cnt;
-            }while(!(fs.rename(dst,tmpDst)));
+            }while(!(fs.rename(dst,tmpSrc)));
         }
         if((mode!=(Mode.APPEND))||(!(fs.exists(dst)))){
             fs.copyFromLocalFile(false,true,src,dst);
-            if(tmpDst==null)
+            if(tmpSrc==null)
                 return;
         }
-        try(InputStream in=(mode==(Mode.APPEND))?new BufferedInputStream(new FileInputStream(localPath)):(fs.open(tmpDst));FSDataOutputStream out=(fs.append(dst))){
+        try(InputStream in=(mode==(Mode.APPEND))?new BufferedInputStream(new FileInputStream(localPath)):(fs.open(tmpSrc));FSDataOutputStream out=(fs.append(dst))){
             IOUtils.copyBytes(in,out,appendBufferSize,false);
         }catch(Exception e){
             if(mode==(Mode.PREPEND)){
                 fs.delete(dst);
-                fs.rename(tmpDst,dst);
-                tmpDst=null;
+                fs.rename(tmpSrc,dst);
+                tmpSrc=null;
             }
             throw e;
         }finally{
-            if(tmpDst!=null)
-                fs.delete(tmpDst);
+            if(tmpSrc!=null)
+                fs.delete(tmpSrc);
         }
     }
 }

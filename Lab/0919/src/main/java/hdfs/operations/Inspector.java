@@ -19,9 +19,12 @@ public class Inspector{
         FileStatus selfStatus=fs.getFileStatus(path);
         res.add(new HDFSInfo(selfStatus));
         FileStatus[] statuses=(fs.listStatus(path));
-        if(selfStatus.isDirectory()&&recursive)
+        if(selfStatus.isDirectory())
             for(FileStatus status:statuses)
-                res.add(getInfo(status.getPath().toString(),recursive));
+                if(recursive)
+                    res.addAll(getInfo(status.getPath().toString(),true));
+                else
+                    res.add(new HDFSInfo(status));
         return res;
     }
 }
