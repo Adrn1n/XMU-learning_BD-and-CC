@@ -61,4 +61,12 @@
     <name>hbase.cluster.distributed</name>
     <value>true</value>
   </property> <!-- commet if single node -->
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/home/hadoop/zk_data</value>
+  </property> <!-- commet if single node -->
+  <property>
+    <name>hbase.wal.provider</name>
+    <value>filesystem</value>
+  </property> <!-- commet if single node -->
 </configuration>
