@@ -26,9 +26,11 @@
 
 # The java implementation to use.  Java 1.8+ required.
 # export JAVA_HOME=/usr/java/jdk1.8.0/
+export JAVA_HOME=/usr/lib/jvm/jdk-11.0.24/
 
 # Extra Java CLASSPATH elements.  Optional.
 # export HBASE_CLASSPATH=
+export HBASE_CLASSPATH=/usr/local/hbase/hbase-2.5.11/conf # comment if single node
 
 # The maximum amount of heap to use. Default is left to JVM default.
 # export HBASE_HEAPSIZE=1G
@@ -124,6 +126,7 @@
 
 # Tell HBase whether it should manage it's own instance of ZooKeeper or not.
 # export HBASE_MANAGES_ZK=true
+export HBASE_MANAGES_ZK=true
 
 # The default log rolling policy is RFA, where the log file is rolled as per the size defined for the
 # RFA appender. Please refer to the log4j2.properties file to see more details on this appender.
@@ -137,6 +140,7 @@
 # Tell HBase whether it should include Hadoop's lib when start up,
 # the default value is false,means that includes Hadoop's lib.
 # export HBASE_DISABLE_HADOOP_CLASSPATH_LOOKUP="true"
+export HBASE_DISABLE_HADOOP_CLASSPATH_LOOKUP="true"
 
 # Override text processing tools for use by these launch scripts.
 # export GREP="${GREP-grep}"
@@ -208,7 +212,3 @@
 #
 # Additional arguments passed to jshell invocation
 # export HBASE_JSHELL_ARGS="--startup DEFAULT --startup PRINTING --startup hbase_startup.jsh"
-
-export JAVA_HOME=/usr/lib/jvm/jdk-11.0.24
-export HBASE_CLASSPATH=/usr/local/hbase/hbase-2.5.11/conf # comment if single node
-export HBASE_MANAGES_ZK=true
