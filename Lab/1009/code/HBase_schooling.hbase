@@ -1,0 +1,96 @@
+# A.(1)
+list
+
+# B.1
+## define tables (B.2.(1))
+### tab14.3
+disable 'Student'
+drop 'Student'
+create 'Student', 'info'
+
+### tab14.4
+disable 'Course'
+drop 'Course'
+create 'Course', 'info'
+
+### tab14.5
+disable 'SC'
+drop 'SC'
+create 'SC', 'score'
+
+## insert data (B.2.(2))
+### tab14.3
+put 'Student', '2015001', 'info:S_Name', 'Zhangsan'
+put 'Student', '2015001', 'info:S_Sex', 'male'
+put 'Student', '2015001', 'info:S_Age', '23'
+
+put 'Student', '2015002', 'info:S_Name', 'Mary'
+put 'Student', '2015002', 'info:S_Sex', 'female'
+put 'Student', '2015002', 'info:S_Age', '22'
+
+put 'Student', '2015003', 'info:S_Name', 'Lisi'
+put 'Student', '2015003', 'info:S_Sex', 'male'
+put 'Student', '2015003', 'info:S_Age', '24'
+
+### tab14.4
+put 'Course', '123001', 'info:C_Name', 'Math'
+put 'Course', '123001', 'info:C_Credit', '2.0'
+
+put 'Course', '123002', 'info:C_Name', 'Computer Science'
+put 'Course', '123002', 'info:C_Credit', '5.0'
+
+put 'Course', '123003', 'info:C_Name', 'English'
+put 'Course', '123003', 'info:C_Credit', '3.0'
+
+### tab14.5
+put 'SC', '2015001_123001', 'score:SC_Score', '86'
+put 'SC', '2015001_123003', 'score:SC_Score', '69'
+put 'SC', '2015002_123002', 'score:SC_Score', '77'
+put 'SC', '2015002_123003', 'score:SC_Score', '99'
+put 'SC', '2015003_123001', 'score:SC_Score', '98'
+put 'SC', '2015003_123002', 'score:SC_Score', '95'
+
+# A.(2)
+scan 'Student'
+scan 'Course'
+scan 'SC'
+
+# A.(3)
+## A.(3).1
+disable 'Student'
+alter 'Student', {NAME => 'contact'}
+enable 'Student'
+describe 'Student'
+
+disable 'Student'
+alter 'Student', 'delete' => 'contact'
+enable 'Student'
+describe 'Student'
+
+## A.(3).2
+put 'Student', '2015001', 'info:S_Contact', '123456'
+get 'Student', '2015001'
+delete 'Student', '2015001', 'info:S_Contact'
+get 'Student', '2015001'
+
+# A.(4)
+truncate 'Student'
+scan 'Student'
+
+# A.(5)
+count 'Student'
+count 'Course'
+count 'SC'
+
+# B.2.(3)
+scan 'Course', {COLUMNS => 'info'}
+scan 'Course', {COLUMNS => 'info:C_Name'}
+
+# B.2.(4)
+get 'Course', '123001', {COLUMNS => 'info:C_Credit'}
+put 'Course', '123001', 'info:C_Credit', '3.0'
+get 'Course', '123001', {COLUMNS => 'info:C_Credit'}
+
+# B.2.(5)
+deleteall 'Course', '123001'
+scan 'Course'
