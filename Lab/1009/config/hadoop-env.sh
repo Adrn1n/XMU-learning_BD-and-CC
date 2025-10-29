@@ -52,7 +52,7 @@
 # The java implementation to use. By default, this environment
 # variable is REQUIRED on ALL platforms except OS X!
 # export JAVA_HOME=
-export JAVA_HOME=/usr/lib/jvm/jdk-11.0.24 # //
+export JAVA_HOME=/usr/lib/jvm/jdk-11.0.24
 
 # The language environment in which Hadoop runs. Use the English
 # environment to ensure that logs are printed as expected.
@@ -435,4 +435,3 @@ export HADOOP_OS_TYPE=${HADOOP_OS_TYPE:-$(uname -s)}
 # export HADOOP_REGISTRYDNS_SECURE_EXTRA_OPTS="-jvm server"
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HADOOP_HOME/lib/native
-
