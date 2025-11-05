@@ -1,0 +1,30 @@
+# 1.(1)
+disable 'Student'
+drop 'Student'
+create 'Student', 'score'
+put 'Student', 'Zhangsan', 'score:English', '69'
+put 'Student', 'Zhangsan', 'score:Math', '86'
+put 'Student', 'Zhangsan', 'score:Computer', '77'
+put 'Student', 'lisi', 'score:English', '55'
+put 'Student', 'lisi', 'score:Math', '100'
+put 'Student', 'lisi', 'score:Computer', '88'
+
+# 1.(2)
+scan 'Student'
+
+# 1.(3)
+get 'Student', 'Zhangsan', 'score:Computer'
+
+# 1.(4)
+put 'Student', 'lisi', 'score:Math', '95'
+
+# 2.(1)
+put 'Student', 'scofield', 'score:English', '45'
+put 'Student', 'scofield', 'score:Math', '89'
+put 'Student', 'scofield', 'score:Computer', '100'
+
+# 2.(2)
+get 'Student', 'scofield', 'score:English'
+
+# Check
+scan 'Student'
