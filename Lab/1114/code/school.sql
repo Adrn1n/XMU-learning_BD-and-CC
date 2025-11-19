@@ -1,18 +1,3 @@
----
-title: MySQL实验
-author: 刘行逸
-date: 20251114
----
-
-# Code
-Run in terminal:
-```shell
-sudo -u postgres psql -c "CREATE DATABASE my_first_database;"
-
-```
-
-`school.sql`:
-```sql
 -- IV.2
 CREATE TABLE students (
     id SERIAL PRIMARY KEY,
@@ -106,11 +91,3 @@ DELETE FROM students
 WHERE id = 2;
 SELECT *
 FROM student_courses;
-
-```
-
-Run in terminal:
-```shell
-sudo -u postgres psql -d my_first_database -f Lab/1114/code/school.sql
-sudo -u postgres dropdb my_first_database
-```
