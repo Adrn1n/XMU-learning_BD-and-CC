@@ -9,16 +9,7 @@ import hdfs.operations.Manager;
 import java.util.Scanner;
 
 public class Entry{
-    private static final String interactiveModeMenu="""
-0. Exit
-1. Upload
-2. Download
-3. Read file
-4. Inspect info
-5. Create (dir end with '/')
-6. Delete
-7. Move
-""";
+    private static final String interactiveModeMenu="0. Exit\n"+"1. Upload\n"+"2. Download\n"+"3. Read file\n"+"4. Inspect info\n"+"5. Create (dir end with '/')\n"+"6. Delete\n"+"7. Move\n";
 
     private static void handleUpload(String localPath,String hdfsPath,Uploader.Mode mode) throws Exception{
         new Uploader().upload(localPath,hdfsPath,mode);
