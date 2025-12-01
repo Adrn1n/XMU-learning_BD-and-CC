@@ -1,20 +1,32 @@
 import java.util.Scanner;
 import MapReduce.FileMergeDedup;
+import MapReduce.FileSortWithRank;
+import java.util.Arrays;
 
 public class Entry{
-    private static final String interactiveModeMenu="0. Exit\n1. File merge with deduplication\n";
+    private static final String interactiveModeMenu="0. Exit\n1. File merge with deduplication\n2. File sort with rank\n";
 
     private static void handleMD(String[] args) throws Exception{
-        FileMergeDedup.main(new String[]{args[0],args[1],args[2]});
+        FileMergeDedup.main(args);
+    }
+    private static void handleSWR(String[] args) throws Exception{
+        FileSortWithRank.main(args);
     }
     private static void handleArgs(String[] args) throws Exception{
         if(args.length>0){
             switch(args[0]){
                 case "MD":
-                    if(args.length!=4)
-                        throw new IllegalArgumentException("handleArgs(): Usage: MD <inputFile1> <inputFile2> <outputFile>");
-                    handleMD(new String[]{args[1],args[2],args[3]});
-                    break;
+                    if(args.length==4){
+                        handleMD(Arrays.copyOfRange(args,1,args.length));
+                        break;
+                    }
+                    throw new IllegalArgumentException("handleArgs(): Usage: MD <inputFile1> <inputFile2> <outputFile>");
+                case "SWR":
+                    if(args.length>2){
+                        handleSWR(Arrays.copyOfRange(args,1,args.length));
+                        break;
+                    }
+                    throw new IllegalArgumentException("handleArgs(): Usage: SWR <inputFile1> [<inputFile2> ...] <outputFile>");
                 default:
                     throw new IllegalArgumentException("handleArgs(): Unknown command: "+args[0]);
             }
@@ -30,19 +42,34 @@ public class Entry{
             try{
                 System.out.print("Enter choice: ");
                 int choice=scanner.nextInt();
+                scanner.nextLine();
                 switch(choice){
                     case 0:
                         running=false;
                         System.out.println("Exit");
                         break;
                     case 1:
+                        String[] Files1=new String[3];
                         System.out.print("Input file1 path: ");
-                        String inputFile1=scanner.next();
+                        Files1[0]=scanner.nextLine();
                         System.out.print("Input file2 path: ");
-                        String inputFile2=scanner.next();
+                        Files1[1]=scanner.nextLine();
                         System.out.print("Output file path: ");
-                        String outputFile=scanner.next();
-                        handleMD(new String[]{inputFile1,inputFile2,outputFile});
+                        Files1[2]=scanner.nextLine();
+                        handleMD(Files1);
+                        break;
+                    case 2:
+                        System.out.print("Number of input files: ");
+                        int n=scanner.nextInt();
+                        scanner.nextLine();
+                        String[] Files2=new String[n+1];
+                        for(int i=0;i<n;++i){
+                            System.out.print("Input file "+(i+1)+" path: ");
+                            Files2[i]=scanner.nextLine();
+                        }
+                        System.out.print("Output file path: ");
+                        Files2[n]=scanner.nextLine();
+                        handleSWR(Files2);
                         break;
                     default:
                         System.err.println("Invalid choice: "+choice);
