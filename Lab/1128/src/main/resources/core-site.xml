@@ -24,7 +24,8 @@
   </property>
   <property>
     <name>fs.defaultFS</name>
-    <value>hdfs://localhost:9000</value>
+    <!-- <value>hdfs://localhost:9000</value> -->
+    <value>hdfs://ubuntuserver:9000</value>
   </property>
   <property>
     <name>fs.hdfs.impl</name>

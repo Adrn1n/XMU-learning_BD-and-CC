@@ -29,4 +29,12 @@
     <name>dfs.datanode.data.dir</name>
     <value>file:/usr/local/hadoop/hadoop-3.4.2/tmp/dfs/data</value>
   </property>
+  <property>
+    <name>dfs.namenode.rpc-bind-host</name>
+    <value>0.0.0.0</value>
+  </property>
+  <property>
+    <name>dfs.namenode.http-bind-host</name>
+    <value>0.0.0.0</value>
+  </property>
 </configuration>
