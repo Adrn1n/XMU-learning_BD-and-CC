@@ -1,16 +1,20 @@
 import java.util.Scanner;
 import MapReduce.FileMergeDedup;
 import MapReduce.FileSortWithRank;
+import MapReduce.FileGrandRelations;
 import java.util.Arrays;
 
 public class Entry{
-    private static final String interactiveModeMenu="0. Exit\n1. File merge with deduplication\n2. File sort with rank\n";
+    private static final String interactiveModeMenu="0. Exit\n1. File merge with deduplication\n2. File sort with rank\n3. Grand relations\n";
 
     private static void handleMD(String[] args) throws Exception{
         FileMergeDedup.main(args);
     }
     private static void handleSWR(String[] args) throws Exception{
         FileSortWithRank.main(args);
+    }
+    private static void handleGR(String[] args) throws Exception{
+        FileGrandRelations.main(args);
     }
     private static void handleArgs(String[] args) throws Exception{
         if(args.length>0){
@@ -27,6 +31,12 @@ public class Entry{
                         break;
                     }
                     throw new IllegalArgumentException("handleArgs(): Usage: SWR <inputFile1> [<inputFile2> ...] <outputFile>");
+                case "GR":
+                    if(args.length==3){
+                        handleGR(Arrays.copyOfRange(args,1,args.length));
+                        break;
+                    }
+                    throw new IllegalArgumentException("handleArgs(): Usage: GR <inputFile> <output>");
                 default:
                     throw new IllegalArgumentException("handleArgs(): Unknown command: "+args[0]);
             }
@@ -70,6 +80,14 @@ public class Entry{
                         System.out.print("Output file path: ");
                         Files2[n]=scanner.nextLine();
                         handleSWR(Files2);
+                        break;
+                    case 3:
+                        String[] Files3=new String[2];
+                        System.out.print("Input file path: ");
+                        Files3[0]=scanner.nextLine();
+                        System.out.print("Output file path: ");
+                        Files3[1]=scanner.nextLine();
+                        handleGR(Files3);
                         break;
                     default:
                         System.err.println("Invalid choice: "+choice);
