@@ -523,5 +523,50 @@ public class FileGrandRelations extends Configured implements Tool{
 ```
 
 # Problems
+1. System downgrade Java to version 11 and is incompatible with previous gradle settings
+2. `failed on connection exception` with Hadoop shell commands
 
 # Solutions
+1. 
+    - `Lab/gradle/wrapper/gradle-wrapper.properties`
+        ```properties
+        #//...
+        # distributionUrl=https\://services.gradle.org/distributions/gradle-9.1.0-bin.zip
+        distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.6-bin.zip
+        #//...
+        ```
+    - `Lab/settings.gradle.kts`
+        ```kotlin
+        //...
+        //id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+        id("org.gradle.toolchains.foojay-resolver-convention") version "0.10.0"
+        //...
+        ```
+    - `Lab/buildSrc/src/main/kotlin/buildlogic.java-common-conventions.gradle.kts`
+        ```kotlin
+        //...
+        //languageVersion = JavaLanguageVersion.of(21)
+        languageVersion.set(JavaLanguageVersion.of(11))
+        //...
+        ```
+2. 
+    - `Lab/1128/src/main/resources/core-site.xml`
+        ```xml
+        <!-- ... -->
+        <!-- <value>hdfs://localhost:9000</value> -->
+        <value>hdfs://ubuntuserver:9000</value>
+        <!-- ... -->
+        ```
+    - `Lab/1128/src/main/resources/hdfs-site.xml`
+        ```xml
+        <!-- ... -->
+        <property>
+            <name>dfs.namenode.rpc-bind-host</name>
+            <value>0.0.0.0</value>
+        </property>
+        <property>
+            <name>dfs.namenode.http-bind-host</name>
+            <value>0.0.0.0</value>
+        </property>
+        <!-- ... -->
+        ```
